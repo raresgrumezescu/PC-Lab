@@ -1,0 +1,10 @@
+In fisierul router.c, m-am folosit de un while in main si de functiile: *get_best_route, respectiv *get_arp_entry pentru a simula munca unui router in momentul in care trimite pachete.
+In main, while-ul merge cat timp se primesc pachete: rc = get_packet(&m). Se verifica daca suma de control a mesajului este egala cu 0, si daca ttl-ul este pozitiv. Daca cel putin una din aceste conditii nu se respecta (adica suma este != 0 sau ttl == 0), atunci se continua while-ul si se trece la urmatorul pachet. Pentru fiecare pachet care respecta conditiile anterioare, se gaseste cel mai bun matching route, folosindu-se functia *get_best_route. Apoi se actualizeaza ttl-ul si se recalculeaza suma de control; dupa aceea, se cauta intrarea arp corespunzatoare si se actualizeaza adresele ethernet. In final, se transite pachetul la urmatorul router. 
+
+Functia *get_best_route:
+
+Cauta prin tabela de routare care este adresa urmatorului router la care trebuie sa ajunga pachetul. Acest lucru se realizeaza cautandu-se care prefix sete egal cu adresa ip a destinatiei, daca amandurora li se aplica aceeasi masca de retea.
+
+Functia *get_art_entry:
+
+Se cauta elementul din tabela intrarilor arp cel care are ip-ul egal cu cel al ip-ului primit ca parametru. Cand se gaseste acel element, se returneaza.

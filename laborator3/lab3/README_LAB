@@ -1,0 +1,32 @@
+EXERCITIUL 2:
+	
+	Pentru 100 de pachete, rulez ./run_experiment, cu SPEED = 1 si DELAY = 100, iar in terminal obtin urmatorul timp:	real	0m14,373s
+	Daca las nemodificat SPEED si DELAY il maresc la 200, obtin timpul:	real	0m24,352s
+	Pe de alta parte, daca DELAY-ul il las nemodificat la 100 si schimb SPEED-ul, voi obtine urmatorii timpi:
+		pentru SPEED = 5:	real	0m12,565s
+		pentru SPEED = 10:	real	0m12,532s
+	Concluzia pe care o trag din aceste experimente este aceea ca daca SPEED ramane acelasi, iar DELAY se dubleaza (din 100 devine 200), atunci aceasta modificare se simte vizibil in privinta timpului de rulare (se mareste semnificativ cu 10 secunde). Daca, in schimb, DELAY ramane acelasi, iar SPEED se dubleaza (din 5 devine 10), atunci timpul de executie al scriptului se modifica foarte putin, nesemnificativ, cu numai cateva zecu de milisecunde.
+	
+EXERCITIILE 3 si 4:
+
+	In arhiva trimisa am atasat codul pe care l-am obtinut rezolvand aceste 2 exercitii.
+	Cand am rezolvat exercitiul 3, am implementat protocolul folosind fereastra gilsanta, si am procedat in felul urmator:
+		Am retinut in variabila winSize dimensiunea ferestrei glisante, calculata cu ajutorul formulei oferite in enuntul laboratorului:
+			WINDOW_SIZE = (bandwidth * delay * 1000) / (sizeof(FRAME) * 8)
+		Apoi, folosind 3 for-uri, am trimis mesajele (si primit confirmari unde e cazul), in felul urmator:
+			Atunci cand incep sa trimit mesaje, pentru primele winSize mesaje nu astept confirmare, motiv pentru care e suficient numai sa le trimit si atat.
+			Aceasta operatie de trimitere a primelor winSize mesaje o realizez in primul for.
+			De asemenea, in ariabila res vad daca mesajul a fost trimis cu succes, verificand dupa fiecare trimitere de mesaj daca res < 0; daca da, atunci s-a identificat o eroare de 				trimitere, iar programul isi inceteaza functionarea; se afiseaza si un mesaj de eroare.
+		Dupa aceea, pentru urmatoarele mesaje, trimit mesajul iar apoi astept confirmarea.
+			Aceasta o realizez in al doilea for. Intai res = send_message(&t) iar apoi res = recv_message(&t).
+			Daca atat trimiterea, cat si primirea de mesaje a fost efectuata cu succes (adica res este > 0 in ambele cazuri), atunci se coninua for-ul;
+			in caz contrar, se iese din program si se afiseaza un mesaj de eroare.
+		La final, si pentru ultimele winSize mesaje trebuie sa se primeasca confirmari de primire, motiv pentru care programul asteapta ultimele winSize confirmari. Aceasta tot cu un for se 			realizeaza.
+		In acest for se asteapta mesajede confirmare pentru ultimele mesaje trimise, motiv pentru care nu trebuie sa se mai trimita nimic. Se verifica daca confirmarile au fost primite cum 			trebuie tot cu res. Daca acesta este mai mic ca zero, inseamna ca o primire nu a fost facuta cum trebuie, deci e situatie de eroare, motiv pentru care se iese din program.
+		Daca totul merge confrom asteptarilor, atunci dupa cele trei for-uri, programul ar trebui sa se termine cu succes, iar toate mesajele trimise de secv.c sa fi primite si confirmate cu 			succes de recv.c.
+		
+	Cand am rezolvat execritiul 4, tot ce a trebuit sa fac a fost sa adaug suma de control la mesaj inainte dea-l trimite, insa asta nu a schimbat cu nimic modul in care trimiteam mesajele la 		exercitiul 3. Nu am fost nevoit sa sterg sau sa schimb nimic din ce facusem pana in momentul acela, numai sa adaug cateva linii de cod noi, pe langa cele pe care le scrisesem la 3.
+	Exercitiul 4 l-am rezolvat in felul urmator:
+		Am creat o functie numita sum(), de forma: char sum(msg r); aceasta functie primeste un mesaj si ii calculeaza suma de control in felul urmator: face xor pentru fiecare
+		bucata din payload-ul mesajului de dimensiune (size(r.payload) / r.len) iar resultatul il salveaza in intr-o variabila ans, pe care la final o returneaza, aceasta reprezentand suma de 		control. a mesajului. Ce am facut in plus la acest exercitiu este ca, spre deosebire de trei cand trimiteam direct mesajul, acum, inainte de a-l trimite, la finalul lui pun valoaree 			sumei de control corespunzatoare lui si apoi acest mesaj completat il trimit. Cand este primit de recv.c, pe baza aceluasi algoritm de calcul a sumei de control calculeaza cat e aceasta 			pentru mesjaul primit si compara cele douau sume: suma ce a insotit mesajul si cea calculata in recv.c. Daca acestea nu sunt egale, atunci variaila count (in care se tine minte numarul 		mesajelor corupte), se incrementeaza cu o unitate. La finalul trimiteri mesajelor se afseaza in recv.c cat este count pentru a stabili cate mesaje au fost corupte. Corectitudinea 			acestei abordari de calcul a mesajelor corupte am verificat-o comparand numarul retinut in count la final cu cel al valorii CORRUPT din run_experiment, iar acestea erau aproximativ 			aceleasi.
+			

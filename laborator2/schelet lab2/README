@@ -1,0 +1,42 @@
+Am folosit urmatoarea strategie:
+In send:
+	Trimit mai intai un mesaj la recv cu numele fisierului;
+	Astept un mesaj de confirmare ca mesajul a fost primit;
+	Deschid fisierul pe care vreau sa il trimit
+		Daca sunt erori la deschidere, se trimite mesaj de eroare
+		si se sfarseste executia
+	Citesc cu un buffer continutul fisierului, progresiv, intr-un while;
+	(citirea o fac cu read)
+	Daca rezultatul lui read (retinut in "citire") este negativ, atunci eroare,
+	daca nu, atunci se creeaza un mesaj cu t.len = citire si t.payload = continutul
+	salvat in buffer-l buff.
+	Daca citire = 0, atunci fisierul s-a golit, deci se iese din while.
+	Daca totul e in regula, se trimite un mesaj t cu continutul salvat din buff.
+	Se asteapta un mesaj de confirmare, iar cand s-a primit, se verifica daa este megativ:
+		daca este, atunci e caz de eroare.
+		altfel, se afiseaza un mesaj in terminal cu faptul ca mesajul cu continut t.payload
+		s-a trimis.
+
+In recv:
+	Se asteapta mesaj de la send.c.
+	Cand se primeste mesajul, se trimite inapoi un mesaj de confirmare.
+	Se creeaza un alt fisier cu nume asemanator cu cel din mesajul trimis, iar
+	in acest nou fisier se va realiza scrierea continutului ce urmeaza sa fie primit;
+	acest fisier se deschide cu open.
+	Daca sunt probleme la deschidere (fd < 0), atunci eroare si return -1.
+	Progresiv, scriu continutul mesajelor primite; pentru aceasta am considerat un while.
+	Se iese din acest while atunci cand continutul mesajului primit este nul, semn ca nu mai 	 este ce sa se trimita. Daca insa cand se face scrierea (write), se retunreaza un rezultat
+	negativ, atunci eroare la scriere si se termina executia.
+	Cand se primeste mesajul si se scrie in fisierul nou format, se trimite un mesaj de 
+	confirmare ca mesajul a fost primit si se poate trimite altul.
+	Din while se iese in momentul cand se primesc mesaje cu continut nul (scriere = 0).
+
+Vreau sa mentionez ca am avut probleme cu executia programelor, pe care din nefericire nu am reusit sa le rezolv, desi am stat mai mult timp pe acest laborator in speranta
+ ca voi reusi sa rezolv aceste probleme. Cand dau ./run_experiment.sh mi se trimite instiintare din send ca se trimite primul mesaj (cel cu numele fisierului), insa cred ca 
+se intampla ceva in recv, caci programul mi se ruleaza si nu se mai executa si restul pasilor, intr-un fel de bucla infinita. Am incercat sa pun printf-uri cu flag-uri de atetionare
+ in send si recv insa nu imi dau seama care este problema, deoarece acestea nu m-au ajutat. Am verificat de mai multe ori si am modificat mai multe lucruri prin while-uri (singurul loc
+ de unde ar putea proveni bucla infinita), insa tind sa cred ca problema nu este de la while, din cauza ca nu mi se afiseaza mesajul: printf("%s is received...\n", r.payload) din recv,
+ ce nu se afla in while, ci inaintea lui. Nu inteeg de ce programul nu ajunge sa execute aceasta linie, deoarece nu cred ca sunt probleme la primirea primului mesaj (Mi s-ar fi aratat 
+mesajul de eroare: "Receive message"). Ma gandesc ca poate nu mi-a intrat in bucla infinita, ci poate mi se trimit mesajele bine, insa foarte greu, din cauza ca sunt pe masina virtuala
+ si poate se ruleaza mai greu programele. Voi mai incerca sa ma gandesc la acest laborator, insa momentan, mai mult nu am reusit sa fac. In arhiva voi atasa si fisierul al carui contnut 
+vreau sa il trimit.

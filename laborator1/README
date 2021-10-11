@@ -1,0 +1,9 @@
+Pentru acest laborator am reusit sa termin numai exercitiul obligatoriu, si anume implementarea comenzii cat. Conform specificatiilor de la laborator, am implementat si testat cu succes codul pe care il atasez acestei arhive.
+In fd pastrez rezultatul apelului lui open:
+ -daca fd este negativ , atunci este caz de eroare si se afiseaza mesajul: "Eroare"
+ -daca nu, se poate realiza citirea
+Intr-un while se citeste, linie cu linie, continutul fisierului, iar cand nu mai este ce sa se citeasca, atunci se iese din while prin break. Cat inca este ce sa se citeasca (cazul rc > 0) atunci se scrie cu write in terminal (STDOUT_FILENO) linia fisierului, retinuta in buffer-ul buff.
+rc se initializeaza la fiecare repetitie cu linia curenta din fisier. Se cisteste linia cu read, iar apoi se studiaza valoarea lui rd:
+ -daca rd este pozitiv, atunci se scrie in terminal
+ -daca rd este 0, fisierul e gol, se inchide si se ieie din while
+ -daca rd e negativ, eroare si se afiseaza "eroarela citire";
